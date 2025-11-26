@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Book-Tickets-Login</title>
+</head>
+<style>
+	#login {
+		height: 90vh;
+		width: 100%;
+		background-image: -webkit-linear-gradient(rgb(187, 187, 203), rgb(8, 8, 54));
+		color: white;
+		padding-top: 50px;
+
+	}
+</style>
+
+<body>
+	<div id="login" align="center">
+		<h1>Login Page</h1>
+		<div align="center">
+			<div th:if="${pass!=null || fail!=null}" class="message">
+				<h3 style="color: green" th:text="${pass}"></h3>
+				<h3 style="color: red" th:text="${fail}"></h3>
+			</div>
+			<table border="1px">
+				<form action="/login" method="post">
+					<tr>
+						<td>Email: <input type="email" name="email"></td>
+					</tr>
+					<tr>
+						<td>Password: <input type="password" name="password"></td>
+					</tr>
+
+				</form>
+			</table>
+			<button>Login</button>
+		</div>
+	</div>
+
+</body>
+
+</html>
