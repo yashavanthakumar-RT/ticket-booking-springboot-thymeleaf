@@ -11,4 +11,6 @@ public interface UserServise {
 	
 	public String register(UserDto userDto,BindingResult bindingResult);
 	public String login(LoginDto dto,RedirectAttributes  attributes,HttpSession session);
+	 
+	public String logout(HttpSession session, RedirectAttributes attributes);
 }

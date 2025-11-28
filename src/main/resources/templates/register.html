@@ -1,32 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Book Ticket - Registration</title>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <title>Book My Ticket - Register</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<h1>Registration</h1>
-	<div align="center">
-		<h1>Register</h1>
-<div th:if="${pass!=null || fail!=null}" class="message">
-		<h3 style="color: green" th:text="${pass}"></h3>
-		<h3 style="color: red" th:text="${fail}"></h3>
-	</div>
-		<form action="/register" method="post" th:object="${userDto}">
-			Name: <input type="text" th:field="*{name}"> <span
-				th:errors="*{name}"></span> <br> Email: <input type="text"
-				th:field="*{email}"><span th:errors="*{email}"></span> <br>
-			Mobile: <input type="number" th:field="*{mobile}"><span
-				th:errors="*{mobile}"></span> <br> Password: <input type="text"
-				th:field="*{password}"><span th:errors="*{password}"></span>
-			<br> Confirm Password: <input type="text"
-				th:field="*{confirmpassword}"><span
-				th:errors="*{confirmpassword}"></span> <br>
-				 <input
-				type="checkbox" th:field="*{terms}">I accept the terms<span
-				th:errors="*{terms}"></span><br>
-			<button>Register</button>
-		</form>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .register-box {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      padding: 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .register-box h1 {
+      font-weight: 700;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #243b55;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .btn-register {
+      background: linear-gradient(45deg, #ff9800, #ffc107);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 30px;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,152,0,0.4);
+    }
+
+    .alert {
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      animation: fadeInDown 0.6s ease;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-link {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .login-link a {
+      color: #2196f3;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="register-box">
+    <!-- Success/Error Messages -->
+    <div th:if="${pass}" class="alert alert-success" th:text="${pass}"></div>
+    <div th:if="${fail}" class="alert alert-danger" th:text="${fail}"></div>
+
+    <!-- Register Form -->
+    <h1>Register</h1>
+    <form action="/register" method="post" th:object="${userDto}">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input id="name" type="text" th:field="*{name}" class="form-control" required>
+        <span class="text-danger small" th:errors="*{name}"></span>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" type="email" th:field="*{email}" class="form-control" required>
+        <span class="text-danger small" th:errors="*{email}"></span>
+      </div>
+
+      <div class="mb-3">
+        <label for="mobile" class="form-label">Mobile</label>
+        <input id="mobile" type="number" th:field="*{mobile}" class="form-control" required>
+        <span class="text-danger small" th:errors="*{mobile}"></span>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input id="password" type="password" th:field="*{password}" class="form-control" required>
+        <span class="text-danger small" th:errors="*{password}"></span>
+      </div>
+
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input id="confirmpassword" type="password" th:field="*{confirmpassword}" class="form-control" required>
+        <span class="text-danger small" th:errors="*{confirmpassword}"></span>
+      </div>
+
+      <div class="form-check mb-3">
+        <input id="terms" type="checkbox" th:field="*{terms}" class="form-check-input" required>
+        <label for="terms" class="form-check-label">I accept the terms</label>
+        <span class="text-danger small" th:errors="*{terms}"></span>
+      </div>
+
+      <button type="submit" class="btn btn-register w-100">Register</button>
+    </form>
+
+    <!-- Login Link -->
+    <div class="login-link">
+      <small>Already have an account? <a href="/login">Login</a></small>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

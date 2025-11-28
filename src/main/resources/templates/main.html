@@ -1,72 +1,183 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<title>Book Tickets</title>
+  <meta charset="UTF-8">
+  <title>Book My Ticket</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* Global */
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      color: #333;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: linear-gradient(90deg, #141e30, #243b55);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                  url('https://via.placeholder.com/1200x500?text=Cinema+Background') center/cover no-repeat;
+      color: #fff;
+      text-align: center;
+      padding: 120px 20px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.7);
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 15px;
+    }
+    .hero .btn {
+      margin-top: 25px;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .btn-warning:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(255,193,7,0.4);
+    }
+
+    /* Messages */
+    .alert {
+      max-width: 600px;
+      margin: 20px auto;
+      border-radius: 10px;
+      animation: fadeInDown 0.6s ease;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Movie Cards */
+    .movie-card img {
+      height: 260px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .movie-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 10px;
+    }
+    .movie-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, #243b55, #141e30);
+      color: #eee;
+      padding: 20px 0;
+      text-align: center;
+      margin-top: 60px;
+    }
+  </style>
 </head>
-<style>
-	main {
-		height: 90vh;
-		width: 100%;
-		background-image: -webkit-linear-gradient(rgb(187, 187, 203), rgb(8, 8, 54));
-	}
-
-	nav {
-
-		height: 60px;
-		width: 100%;
-	}
-
-	#yashu {
-		display: flex;
-		justify-content: space-around;
-		align-items: center;
-		height: 100%;
-	}
-
-	button {
-		height: 40px;
-		width: 100px;
-		background-color: rgb(8, 8, 54);
-		color: white;
-		border-radius: 10px;
-		border: none;
-		cursor: pointer;
-		font-size: 16px;
-	}
-
-	a {
-		text-decoration: none;
-		color: whitesmoke;
-	}
-</style>
-
 
 <body>
-	<main>
-		<nav>
-			<div id="yashu">
-				<a href="/" th:align="center">
-					<h1> 🎟️Book My Tickets</h1>
-				</a>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark px-4 shadow-sm">
+    <a class="navbar-brand" href="/">🎬 BookMyTicket</a>
+    <div class="ms-auto">
+      <!-- NOT LOGGED IN -->
+      <div th:if="${session.user == null}">
+        <a href="/login" class="btn btn-outline-light me-2">Login</a>
+        <a href="/register" class="btn btn-warning">Register</a>
+      </div>
+      <!-- LOGGED IN -->
+      <div th:if="${session.user != null}" class="d-flex align-items-center">
+        <span class="text-white me-3" th:text="'Hello, ' + ${session.user.name}"></span>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+      </div>
+    </div>
+  </nav>
 
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Your Favorite Movies Await</h1>
+    <p>Book tickets instantly — Fast • Secure • Simple</p>
+    <a href="#movies" class="btn btn-warning btn-lg">Browse Movies</a>
+  </section>
 
-				<div th:if="${pass!=null || fail!=null}" class="message">
-					<h3 style="color: green" th:text="${pass}"></h3>
-					<h3 style="color: red" th:text="${fail}"></h3>
-				</div>
+  <!-- MESSAGES -->
+  <div class="container">
+    <div th:if="${pass}" class="alert alert-success" th:text="${pass}"></div>
+    <div th:if="${fail}" class="alert alert-danger" th:text="${fail}"></div>
+  </div>
 
-				<div align="center" th:if="${session.user==null}">
-					<a href="/login"><button>Login</button></a> <a href="/register"><button>Register</button></a>
-				</div>
-				<div align="center" th:if="${session.user}">
-					<a href="logout"><button>Lagout</button></a>
-				</div>
-			</div>
-			<hr>
-		</nav>
-	</main>
+  <!-- MOVIES -->
+  <section class="container py-5" id="movies">
+    <h2 class="text-center fw-bold mb-4">Now Showing</h2>
+    <div class="row g-4">
+      <!-- Movie Card Example -->
+      <div class="col-md-3 col-sm-6">
+        <div class="card movie-card shadow border-0">
+          <img src="https://via.placeholder.com/300x260?text=Avengers" class="card-img-top" alt="Avengers">
+          <div class="card-body">
+            <h5 class="card-title">Avengers: Endgame</h5>
+            <p class="text-muted small">Action • 3h 1m</p>
+            <a href="#" class="btn btn-primary w-100">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <!-- Repeat for other movies -->
+      <div class="col-md-3 col-sm-6">
+        <div class="card movie-card shadow border-0">
+          <img src="https://via.placeholder.com/300x260?text=Interstellar" class="card-img-top" alt="Interstellar">
+          <div class="card-body">
+            <h5 class="card-title">Interstellar</h5>
+            <p class="text-muted small">Sci-Fi • 2h 49m</p>
+            <a href="#" class="btn btn-primary w-100">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card movie-card shadow border-0">
+          <img src="https://via.placeholder.com/300x260?text=Inception" class="card-img-top" alt="Inception">
+          <div class="card-body">
+            <h5 class="card-title">Inception</h5>
+            <p class="text-muted small">Thriller • 2h 28m</p>
+            <a href="#" class="btn btn-primary w-100">Book Now</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card movie-card shadow border-0">
+          <img src="https://via.placeholder.com/300x260?text=Joker" class="card-img-top" alt="Joker">
+          <div class="card-body">
+            <h5 class="card-title">Joker</h5>
+            <p class="text-muted small">Drama • 2h 2m</p>
+            <a href="#" class="btn btn-primary w-100">Book Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 BookMyTicket — All Rights Reserved</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
