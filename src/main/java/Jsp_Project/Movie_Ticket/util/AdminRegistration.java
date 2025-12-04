@@ -1,0 +1,34 @@
+package Jsp_Project.Movie_Ticket.util;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import Jsp_Project.Movie_Ticket.Repository.UserRepository;
+import Jsp_Project.Movie_Ticket.entity.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class AdminRegistration implements CommandLineRunner {
+
+	@Value("${admin.email}")
+	private String email;
+	@Value("${admin.password}")
+	private String password;
+
+	private final UserRepository userRepository;
+
+	@Override
+	public void run(String... args) throws Exception {
+		if (!userRepository.existsByEmail(email)) {
+			User user = new User(null, "ADMIN", email, 0L, AES.encrypt(password), "ADMIN");
+			userRepository.save(user);
+			log.info("Admin Registration Success");
+		} else
+			log.info("Admin Exists");
+	}
+
+}
