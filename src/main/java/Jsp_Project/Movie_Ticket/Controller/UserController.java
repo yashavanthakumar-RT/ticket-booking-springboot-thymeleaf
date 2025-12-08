@@ -1,4 +1,6 @@
 package Jsp_Project.Movie_Ticket.Controller;
+import java.io.IOException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import Jsp_Project.Movie_Ticket.UserService.UserService;
 import Jsp_Project.Movie_Ticket.dto.LoginDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
+import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -96,6 +99,21 @@ public class UserController {
 	@GetMapping("/un-block/{id}")
 	public String unBlock(@PathVariable Long id,HttpSession session,RedirectAttributes attributes) {
 		return userService.unBlockUser(id,session,attributes);
+	}
+
+	@GetMapping("/manage-theaters")
+	public String manageTheater(ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		return userService.manageTheater(map, attributes, session);
+	}
+
+	@GetMapping("/add-theater")
+	public String addTheater(TheaterDto theaterDto, RedirectAttributes attributes, HttpSession session) {
+		return userService.loadAddTheater(session, attributes, theaterDto);
+	}
+	
+	@PostMapping("/add-theater")
+	public String addTheater(@Valid TheaterDto theaterDto,BindingResult result,RedirectAttributes attributes,HttpSession session) throws IOException {
+		return userService.addTheater(session, attributes, theaterDto,result);
 	}
 }
  
