@@ -1,6 +1,5 @@
 package Jsp_Project.Movie_Ticket.UserService;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -21,6 +20,7 @@ import Jsp_Project.Movie_Ticket.dto.ScreenDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import Jsp_Project.Movie_Ticket.entity.Screen;
+import Jsp_Project.Movie_Ticket.entity.Seat;
 import Jsp_Project.Movie_Ticket.entity.Theater;
 import Jsp_Project.Movie_Ticket.entity.User;
 import Jsp_Project.Movie_Ticket.util.AES;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 	private final RedisService redisService;
 	private final TheaterRepository theaterRepository;
 	private final ScreenRepository screenRepository;
-	 
+
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
 		if (!userDto.getPassword().equals(userDto.getConfirmPassword()))
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/login";
 		} else {
 			if (AES.decrypt(user.getPassword()).equals(dto.getPassword())) {
-				if(user.isBlocked()) {
+				if (user.isBlocked()) {
 					attributes.addFlashAttribute("fail", "Account Blocked!, Contact Admin");
 					return "redirect:/login";
 				}
@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/manage-users";
 		}
 	}
-	
+
 	@Override
 	public String unBlockUser(Long id, HttpSession session, RedirectAttributes attributes) {
 		User user = getUserFromSession(session);
@@ -247,6 +247,7 @@ public class UserServiceImpl implements UserService {
 	private User getUserFromSession(HttpSession session) {
 		return (User) session.getAttribute("user");
 	}
+
 	@Override
 	public String manageTheater(ModelMap map, RedirectAttributes attributes, HttpSession session) {
 		User user = getUserFromSession(session);
@@ -314,6 +315,7 @@ public class UserServiceImpl implements UserService {
 		attributes.addFlashAttribute("pass", "Theater Added Successfully");
 		return "redirect:/manage-theaters";
 	}
+
 	@Override
 	public String deleteTheater(Long id, HttpSession session, RedirectAttributes attributes) {
 		User user = getUserFromSession(session);
@@ -321,6 +323,12 @@ public class UserServiceImpl implements UserService {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		} else {
+
+			Theater theater = theaterRepository.findById(id).orElseThrow();
+			if (theater.getScreenCount() > 0) {
+				List<Screen> screens = screenRepository.findByTheater(theater);
+				screenRepository.deleteAll(screens);
+			}
 			theaterRepository.deleteById(id);
 			attributes.addFlashAttribute("pass", "Theater Removed Success");
 			return "redirect:/manage-theaters";
@@ -440,6 +448,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 	}
+
 	@Override
 	public String deleteScreen(Long id, HttpSession session, RedirectAttributes attributes) {
 		User user = getUserFromSession(session);
@@ -493,6 +502,32 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public String manageSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Seat> seats = screen.getSeats();
+			map.put("seats", seats);
+			map.put("screenId", id);
+			return "manage-seats.html";
+		}
+	}
 
+	@Override
+	public String addSeats(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			map.put("id", id);
+			return "add-seats.html";
+		}
+	}
 
 }
