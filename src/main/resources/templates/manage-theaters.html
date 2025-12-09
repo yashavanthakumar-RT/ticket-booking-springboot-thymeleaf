@@ -37,9 +37,9 @@
 				<th><a target="_blank" th:href="${theater.locationLink}"><button>Click</button></a></th>
 				<th>0</th>
 				<th>
-					<button>Edit</button>
-					<button>Delete</button>
-					<button>Manage Screens</button>
+					<a th:href="'/edit-theater/'+${theater.id}"><button>Edit</button></a>
+					<a th:href="'/delete-theater/'+${theater.id}"><button>Delete</button></a>
+					<a th:href="'/manage-screens/'+${theater.id}"><button>Manage Screens</button></a>
 				</th>
 			</tr>
 			

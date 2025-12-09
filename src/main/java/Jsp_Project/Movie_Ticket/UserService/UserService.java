@@ -7,6 +7,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import Jsp_Project.Movie_Ticket.dto.LoginDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
+import Jsp_Project.Movie_Ticket.dto.ScreenDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +32,20 @@ public interface UserService {
 	public String loadAddTheater(HttpSession session, RedirectAttributes attributes, TheaterDto theaterDto);
 	public String addTheater(HttpSession session, RedirectAttributes attributes, @Valid TheaterDto theaterDto,
 			BindingResult result) throws IOException;
+
+	String deleteTheater(Long id, HttpSession session, RedirectAttributes attributes);
+
+	String editTheater(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
+
+	String updateTheater(HttpSession session, RedirectAttributes attributes, @Valid TheaterDto theaterDto,
+			BindingResult result, Long id);
+
+	String manageScreens(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
+
+	String addScreen(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map, ScreenDto screenDto);
+
+	String addScreen(ScreenDto screenDto,BindingResult result, HttpSession session, RedirectAttributes attributes);
+
 }
  
  
