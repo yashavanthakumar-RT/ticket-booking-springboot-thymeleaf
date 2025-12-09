@@ -46,6 +46,13 @@ public interface UserService {
 
 	String addScreen(ScreenDto screenDto,BindingResult result, HttpSession session, RedirectAttributes attributes);
 
+	String deleteScreen(Long id, HttpSession session, RedirectAttributes attributes);
+
+	String editScreen(Long id, HttpSession session, RedirectAttributes attributes, ModelMap map);
+
+	String updateScreen(@Valid ScreenDto screenDto, Long id, BindingResult result, HttpSession session,
+			RedirectAttributes attributes, ModelMap map);
+
 }
  
  
