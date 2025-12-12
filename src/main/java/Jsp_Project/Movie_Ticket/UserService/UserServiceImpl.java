@@ -3,7 +3,10 @@ package Jsp_Project.Movie_Ticket.UserService;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -11,19 +14,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import Jsp_Project.Movie_Ticket.Repository.MovieRepository;
 import Jsp_Project.Movie_Ticket.Repository.ScreenRepository;
 import Jsp_Project.Movie_Ticket.Repository.TheaterRepository;
 import Jsp_Project.Movie_Ticket.Repository.UserRepository;
 import Jsp_Project.Movie_Ticket.dto.LoginDto;
+import Jsp_Project.Movie_Ticket.dto.MovieDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
 import Jsp_Project.Movie_Ticket.dto.ScreenDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
+import Jsp_Project.Movie_Ticket.entity.Movie;
 import Jsp_Project.Movie_Ticket.entity.Screen;
 import Jsp_Project.Movie_Ticket.entity.Seat;
 import Jsp_Project.Movie_Ticket.entity.Theater;
 import Jsp_Project.Movie_Ticket.entity.User;
 import Jsp_Project.Movie_Ticket.util.AES;
+import Jsp_Project.Movie_Ticket.util.CloudinaryHelper;
 import Jsp_Project.Movie_Ticket.util.EmailHelper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -39,6 +46,8 @@ public class UserServiceImpl implements UserService {
 	private final RedisService redisService;
 	private final TheaterRepository theaterRepository;
 	private final ScreenRepository screenRepository;
+	private final MovieRepository movieRepository;
+	private final CloudinaryHelper cloudinaryHelper;
 
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
@@ -530,4 +539,115 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public String manageMovies(HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			List<Movie> list = movieRepository.findAll();
+			map.put("movies", list);
+			return "manage-movies.html";
+		}
+
+	}
+
+	@Override
+	public String loadAddMovie(MovieDto movieDto, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			return "add-movies.html";
+		}
+	}
+
+	@Override
+	public String addMovie(MovieDto movieDto, BindingResult result, RedirectAttributes attributes,
+			HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+
+			if (movieRepository.existsByNameAndReleaseDate(movieDto.getName(), movieDto.getReleaseDate()))
+				result.rejectValue("name", "error.name", "* Movie Already Exists");
+			if (movieDto.getImage().getSize() == 0)
+				result.rejectValue("image", "error.image", "* Image is Required");
+			if (result.hasErrors())
+				return "add-movies.html";
+
+			Movie movie = new Movie(null, movieDto.getName(), movieDto.getLanguages(), movieDto.getGenre(),
+					movieDto.getDuration(), cloudinaryHelper.generateImageLink(movieDto.getImage()),
+					movieDto.getTrailerLink(), movieDto.getDescription(), movieDto.getReleaseDate(),
+					movieDto.getCast());
+
+			movieRepository.save(movie);
+			attributes.addFlashAttribute("pass", "Movie Added Success");
+			return "redirect:/manage-movies";
+
+		}
+	}
+
+	@Override
+	public String deleteMovies(Long id, HttpSession session, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			movieRepository.deleteById(id);
+			attributes.addFlashAttribute("pass", "Movie  Removed Success");
+			return "redirect:/manage-movies";
+		}
+	}
+
+	public String editmovie(Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Movie movie = movieRepository.findById(id).orElseThrow();
+			MovieDto movieDto = new MovieDto(movie.getName(), movie.getLanguages(), movie.getGenre(),
+					movie.getDuration(), null, movie.getTrailerLink(), movie.getDescription(), movie.getReleaseDate(),
+					movie.getCast());
+			map.put("movieDto", movieDto);
+			map.put("id", id);
+			map.put("imageLink", movie.getImageLink());
+			return "edit-movie.html";
+		}
+	}
+
+	@Override
+	public String updateMovies(@Valid MovieDto movieDto, Long id, BindingResult result, RedirectAttributes attributes,
+			HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Movie movie = movieRepository.findById(id).orElseThrow();
+			movie.setName(movieDto.getName());
+			movie.setLanguages(movieDto.getLanguages());
+			movie.setGenre(movieDto.getGenre());
+			movie.setCast(movieDto.getCast());
+			movie.setDescription(movieDto.getDescription());
+			movie.setDuration(movieDto.getDuration());
+			movie.setTrailerLink(movieDto.getTrailerLink());
+			movie.setReleaseDate(movieDto.getReleaseDate());
+
+			MultipartFile image = movieDto.getImage();
+			if (image != null && image.getSize() > 0) {
+				String imageLink = cloudinaryHelper.generateImageLink(image);
+				movie.setImageLink(imageLink);
+			}
+			movieRepository.save(movie);
+			attributes.addFlashAttribute("pass", "Update data");
+			return "redirect:/edit-movies/" + id;
+		}
+	}
 }

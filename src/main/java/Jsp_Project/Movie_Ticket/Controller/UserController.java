@@ -1,5 +1,7 @@
 package Jsp_Project.Movie_Ticket.Controller;
+
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import Jsp_Project.Movie_Ticket.UserService.UserService;
 import Jsp_Project.Movie_Ticket.dto.LoginDto;
+import Jsp_Project.Movie_Ticket.dto.MovieDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
 import Jsp_Project.Movie_Ticket.dto.ScreenDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
@@ -26,8 +29,7 @@ public class UserController {
 
 	private final UserService userService;
 
- 
-	@GetMapping({"/","/main"})
+	@GetMapping({ "/", "/main" })
 	public String loadMain() {
 		return "main.html";
 	}
@@ -36,7 +38,8 @@ public class UserController {
 	public String loadRegister(UserDto userDto) {
 		return "register.html";
 	}
-     @PostMapping("/register")
+
+	@PostMapping("/register")
 	public String register(@Valid UserDto userDto, BindingResult result, RedirectAttributes attributes) {
 		return userService.register(userDto, result, attributes);
 	}
@@ -47,14 +50,15 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public String login(LoginDto dto,RedirectAttributes attributes,HttpSession session) {
-		return userService.login(dto,attributes,session);
+	public String login(LoginDto dto, RedirectAttributes attributes, HttpSession session) {
+		return userService.login(dto, attributes, session);
 	}
-	
+
 	@GetMapping("/logout")
-	public String logout(HttpSession session,RedirectAttributes attributes) {
-		return userService.logout(session,attributes);
+	public String logout(HttpSession session, RedirectAttributes attributes) {
+		return userService.logout(session, attributes);
 	}
+
 	@GetMapping("/otp")
 	public String loadOtpPage() {
 		return "otp.html";
@@ -64,6 +68,7 @@ public class UserController {
 	public String submitOtp(@RequestParam int otp, @RequestParam String email, RedirectAttributes attributes) {
 		return userService.submitOtp(otp, email, attributes);
 	}
+
 	@GetMapping("/resend-otp/{email}")
 	public String resendOtp(@PathVariable String email, RedirectAttributes attributes) {
 		return userService.resendOtp(email, attributes);
@@ -85,21 +90,24 @@ public class UserController {
 	}
 
 	@PostMapping("/reset-password")
-	public String resetPassword(@Valid PasswordDto passwordDto,BindingResult result,ModelMap map, RedirectAttributes attributes) {
-		return userService.resetPassword(passwordDto,result, attributes,map);
+	public String resetPassword(@Valid PasswordDto passwordDto, BindingResult result, ModelMap map,
+			RedirectAttributes attributes) {
+		return userService.resetPassword(passwordDto, result, attributes, map);
 	}
+
 	@GetMapping("/manage-users")
-	public String viewUsers(HttpSession session,RedirectAttributes attributes,ModelMap map) {
-		return userService.manageUsers(session,attributes,map);
+	public String viewUsers(HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		return userService.manageUsers(session, attributes, map);
 	}
-	
+
 	@GetMapping("/block/{id}")
-	public String block(@PathVariable Long id,HttpSession session,RedirectAttributes attributes) {
-		return userService.blockUser(id,session,attributes);
+	public String block(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
+		return userService.blockUser(id, session, attributes);
 	}
+
 	@GetMapping("/un-block/{id}")
-	public String unBlock(@PathVariable Long id,HttpSession session,RedirectAttributes attributes) {
-		return userService.unBlockUser(id,session,attributes);
+	public String unBlock(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
+		return userService.unBlockUser(id, session, attributes);
 	}
 
 	@GetMapping("/manage-theaters")
@@ -111,7 +119,7 @@ public class UserController {
 	public String addTheater(TheaterDto theaterDto, RedirectAttributes attributes, HttpSession session) {
 		return userService.loadAddTheater(session, attributes, theaterDto);
 	}
-	
+
 	@PostMapping("/add-theater")
 	public String addTheater(@Valid TheaterDto theaterDto, BindingResult result, RedirectAttributes attributes,
 			HttpSession session) throws IOException {
@@ -151,6 +159,7 @@ public class UserController {
 			RedirectAttributes attributes) {
 		return userService.addScreen(screenDto, result, session, attributes);
 	}
+
 	@GetMapping("/delete-screen/{id}")
 	public String deleteScreen(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
 		return userService.deleteScreen(id, session, attributes);
@@ -166,16 +175,47 @@ public class UserController {
 			RedirectAttributes attributes, HttpSession session) {
 		return userService.updateScreen(screenDto, id, result, session, attributes, map);
 	}
+
 	@GetMapping("/manage-seats/{id}")
 	public String manageSeats(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
 		return userService.manageSeats(id, session, map, attributes);
 	}
-	
+
 	@GetMapping("/add-seats/{id}")
 	public String addSeats(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
 		return userService.addSeats(id, session, map, attributes);
 	}
+
+	@GetMapping("/manage-movies")
+	public String moviesmange(HttpSession session, RedirectAttributes attributes, ModelMap map) {
+		return userService.manageMovies(session, attributes, map);
+	}
+
+	@GetMapping("/add-movie")
+	public String loadAddMovie(MovieDto movieDto, RedirectAttributes attributes, HttpSession session) {
+		return userService.loadAddMovie(movieDto, attributes, session);
+	}
+
+	@PostMapping("/add-movie")
+	public String addMovie(@Valid MovieDto movieDto, BindingResult result, RedirectAttributes attributes,
+			HttpSession session) {
+		return userService.addMovie(movieDto, result, attributes, session);
+	}
+
+	@GetMapping("/edit-movies/{id}")
+	public String editmovie(@PathVariable Long id, HttpSession session, ModelMap map, RedirectAttributes attributes) {
+		return userService.editmovie(id, session, map, attributes);
+	}
+
+	@GetMapping("/delete-movies/{id}")
+	public String deleteMovies(@PathVariable Long id, HttpSession session, RedirectAttributes attributes) {
+		return userService.deleteMovies(id, session, attributes);
+	}
+
+	@PostMapping("/update-movie")
+	public String updateMovies(@Valid MovieDto movieDto, BindingResult result, RedirectAttributes attributes,
+			HttpSession session, @RequestParam("id") Long id) {
+		return userService.updateMovies(movieDto, id, result, attributes, session);
+	}
+
 }
- 
- 
- 
