@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit movie</title>
+</head>
+
+<body>
+    <h2>✏️ Edit Movie</h2>
+    <div align="center">
+        <form action="/update-movie" method="post" th:object="${movieDto}" enctype="multipart/form-data">
+
+            <!-- Hidden ID field bound to movieDto -->
+            <input type="hidden" name="id" th:value="${id}" />
+
+            Name: <input type="text" th:field="*{name}"><br><br>
+            Languages: <input type="text" th:field="*{languages}"><br><br>
+            Genre: <input type="text" th:field="*{genre}"><br><br>
+            Duration: <input type="text" th:field="*{duration}"><br><br>
+            Image: <input type="file" th:field="*{image}"><br><br>
+            Trailer Link: <input type="text" th:field="*{trailerLink}"><br><br>
+            Description: <input type="text" th:field="*{description}"><br><br>
+            Release Date: <input type="date" th:field="*{releaseDate}"><br><br>
+            Cast: <input type="text" th:field="*{cast}"><br><br>
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+
+</html>

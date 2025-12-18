@@ -1,6 +1,7 @@
 package Jsp_Project.Movie_Ticket.entity;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +28,8 @@ public class Movie {
 	private String languages;
 	@Column(nullable = false)
 	private String genre;
-	@Column(nullable = false)
-	private String duration;
+	@NotNull(message = "* It is Required")
+	private LocalTime duration;
 	@Column(nullable = false)
 	private String imageLink;
 	@Column(nullable = false)

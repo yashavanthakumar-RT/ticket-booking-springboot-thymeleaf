@@ -4,10 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Manage Theaters - BookMyTicket Admin</title>
-
-	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+	<title>Manage Movies - BookMyTicket</title>
 
 	<!-- Favicon -->
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -120,104 +117,92 @@
 			color: white;
 		}
 
-		/* Cards Grid */
-		.theaters-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-			gap: 25px;
-			margin-bottom: 40px;
-		}
-
-		/* Theater Card */
-		.theater-card {
+		/* Table Container */
+		.table-wrapper {
 			background: #fff;
 			border-radius: 12px;
 			border: 1px solid #e8e8e8;
 			overflow: hidden;
 			box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-			transition: all 0.3s ease;
+			margin-bottom: 30px;
 		}
 
-		.theater-card:hover {
-			transform: translateY(-8px);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+		.table {
+			margin-bottom: 0;
+			color: #2c3e50;
 		}
 
-		.theater-image {
-			width: 100%;
-			height: 180px;
-			object-fit: cover;
-			background: linear-gradient(135deg, #e74c3c 0%, #f39c12 100%);
-		}
-
-		.theater-content {
-			padding: 20px;
-		}
-
-		.theater-name {
-			font-size: 1.2rem;
+		.table thead th {
+			background: #e74c3c;
+			color: white;
 			font-weight: 700;
-			color: #1a252f;
-			margin-bottom: 10px;
-		}
-
-		.theater-info {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			margin-bottom: 15px;
-		}
-
-		.info-item {
-			display: flex;
-			align-items: flex-start;
-			gap: 10px;
+			border: none;
+			padding: 1rem 1.2rem;
 			font-size: 0.9rem;
-			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
 		}
 
-		.info-icon {
-			font-size: 1rem;
-			color: #e74c3c;
-			min-width: 18px;
+		.table tbody td {
+			padding: 1rem 1.2rem;
+			border-color: #e8e8e8;
+			vertical-align: middle;
+			font-weight: 500;
 		}
 
-		.info-text {
-			word-break: break-word;
-			flex: 1;
+		.table tbody tr {
+			transition: all 0.3s ease;
+			border-bottom: 1px solid #e8e8e8;
 		}
 
-		.screen-count {
-			background: rgba(231, 76, 60, 0.1);
-			padding: 0.6rem 1rem;
-			border-radius: 6px;
+		.table tbody tr:hover {
+			background: #f8f9fa;
+		}
+
+		.table tbody tr:last-child {
+			border-bottom: none;
+		}
+
+		.movie-name {
+			color: #1a252f;
 			font-weight: 600;
+		}
+
+		.movie-image {
+			width: 60px;
+			height: 60px;
+			border-radius: 6px;
+			border: 1px solid #e8e8e8;
+			object-fit: cover;
+		}
+
+		.movie-genre {
+			background: rgba(231, 76, 60, 0.1);
+			padding: 0.4rem 0.8rem;
+			border-radius: 6px;
 			color: #e74c3c;
-			font-size: 0.85rem;
+			font-weight: 600;
 			display: inline-block;
-			margin-bottom: 12px;
+			font-size: 0.85rem;
 		}
 
 		/* Action Buttons */
-		.card-actions {
+		.action-cell {
 			display: flex;
 			gap: 8px;
 			flex-wrap: wrap;
 		}
 
-		.btn-edit, .btn-delete, .btn-screens, .btn-location {
-			flex: 1;
-			min-width: 75px;
-			padding: 0.5rem 0.8rem;
-			border: none;
+		.btn-edit, .btn-delete {
+			padding: 0.5rem 1rem;
 			border-radius: 6px;
 			font-weight: 600;
-			font-size: 0.75rem;
+			font-size: 0.8rem;
 			cursor: pointer;
 			transition: all 0.3s ease;
 			text-decoration: none;
-			text-align: center;
 			display: inline-block;
+			border: none;
 		}
 
 		.btn-edit {
@@ -242,26 +227,6 @@
 			box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 		}
 
-		.btn-screens {
-			background: #f39c12;
-			color: white;
-		}
-
-		.btn-screens:hover {
-			background: #d68910;
-			transform: translateY(-2px);
-			box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
-		}
-
-		.btn-location {
-			background: #95a5a6;
-			color: white;
-		}
-
-		.btn-location:hover {
-			background: #7f8c8d;
-		}
-
 		/* Empty State */
 		.empty-state {
 			text-align: center;
@@ -280,6 +245,48 @@
 		.empty-state p {
 			color: #666;
 			margin-bottom: 2rem;
+		}
+
+		/* Responsive Design */
+		@media (max-width: 1200px) {
+			.table {
+				font-size: 0.9rem;
+			}
+
+			.table thead th,
+			.table tbody td {
+				padding: 0.8rem;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.admin-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.admin-header h1 {
+				font-size: 1.6rem;
+			}
+
+			.table {
+				font-size: 0.85rem;
+			}
+
+			.table thead th,
+			.table tbody td {
+				padding: 0.6rem;
+			}
+
+			.action-cell {
+				flex-direction: column;
+				gap: 5px;
+			}
+
+			.btn-edit, .btn-delete {
+				width: 100%;
+				text-align: center;
+			}
 		}
 
 		/* ========== TOAST NOTIFICATIONS ========== */
@@ -366,136 +373,98 @@
 				transform: translateX(450px);
 			}
 		}
-
-		/* Responsive Design */
-		@media (max-width: 1200px) {
-			.theaters-grid {
-				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-			}
-		}
-
-		@media (max-width: 768px) {
-			.admin-header {
-				flex-direction: column;
-				align-items: flex-start;
-			}
-
-			.admin-header h1 {
-				font-size: 1.6rem;
-			}
-
-			.theaters-grid {
-				grid-template-columns: 1fr;
-			}
-		}
 	</style>
 </head>
 
 <body>
-
 	<!-- NAVBAR -->
-	<nav class="navbar navbar-expand-lg">
+	<nav class="navbar navbar-expand-lg navbar-light bg-white">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="/">📽️ BookMyTicket</a>
+			<a class="navbar-brand" href="/">🎬 BookMyTicket</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav ms-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="/">Home</a>
+						<a class="nav-link" href="/admin-dashboard">Dashboard</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/manage-users">Manage Users</a>
+						<a class="nav-link" href="/manage-movies">Movies</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/manage-theaters">Theaters</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/manage-users">Users</a>
+					</li>
+					<li class="nav-item">
+						<button class="btn-logout" onclick="location.href='/logout'">Logout</button>
 					</li>
 				</ul>
 			</div>
 		</div>
 	</nav>
 
-	<!-- TOASTS -->
-	<div class="toastify-container">
-		<div th:if="${pass}" class="toastify success">
-			<span th:text="${pass}"></span>
-		</div>
-		<div th:if="${fail}" class="toastify error">
-			<span th:text="${fail}"></span>
-		</div>
-	</div>
-
-	<!-- MAIN CONTENT -->
+	<!-- MAIN CONTAINER -->
 	<div class="admin-container">
+
+		<!-- HEADER -->
 		<div class="admin-header">
-			<h1>🏛️ Manage Theaters</h1>
-			<a href="/add-theater" class="add-btn">+ Add Theater</a>
+			<h1>🎬 Movies Management</h1>
+			<a href="/add-movie" class="add-btn">+ Add Movie</a>
+		</div>
+
+		<!-- MOVIES TABLE -->
+		<div th:if="${!movies.isEmpty()}">
+			<div class="table-wrapper">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Image</th>
+							<th>Name</th>
+							<th>Genre</th>
+							<th>Duration</th>
+							<th>Languages</th>
+							<th>Release Date</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="movie:${movies}">
+							<td>
+								<img th:alt="${movie.name}" th:src="${movie.imageLink}" class="movie-image">
+							</td>
+							<td class="movie-name" th:text="${movie.name}"></td>
+							<td>
+								<span class="movie-genre" th:text="${movie.genre}"></span>
+							</td>
+							<td th:text="${movie.duration}"></td>
+							<td th:text="${movie.languages}"></td>
+							<td th:text="${#dates.format(movie.releaseDate, 'dd/MM/yyyy')}"></td>
+							<td>
+								<div class="action-cell">
+									<a href="#" class="btn-edit">Edit</a>
+									<a href="#" class="btn-delete">Delete</a>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 
 		<!-- EMPTY STATE -->
-		<div th:if="${theaters.isEmpty()}" class="empty-state">
-			<div class="empty-state-icon">🎭</div>
-			<div class="empty-state-title">No Theaters Yet</div>
-			<p class="empty-state-text">Start by adding your first theater to begin managing screens and shows.</p>
-			<a href="/add-theater" class="add-btn">+ Add Your First Theater</a>
-		</div>
-
-		<!-- THEATERS GRID -->
-		<div th:if="${!theaters.isEmpty()}" class="theaters-grid">
-			<div th:each="theater : ${theaters}" class="theater-card">
-				<img th:src="${theater.imageLocation}" alt="Theater" class="theater-image">
-
-				<div class="theater-content">
-					<h3 class="theater-name" th:text="${theater.name}"></h3>
-
-					<div class="info-item">
-						<span class="info-icon">📍</span>
-						<span class="info-text" th:text="${theater.address}"></span>
-					</div>
-
-					<span class="screen-count" th:text="'Screens: '+${theater.screenCount}"></span>
-
-					<div class="card-actions">
-						<a th:href="'/edit-theater/'+${theater.id}" class="btn-edit">✏️ Edit</a>
-						<a target="_blank" th:href="${theater.locationLink}" class="btn-location">📍 Location</a>
-						<a th:href="'/manage-screens/'+${theater.id}" class="btn-screens">🎬 Screens</a>
-						<a th:href="'/delete-theater/'+${theater.id}" class="btn-delete" onclick="return confirm('Are you sure?');">🗑️ Delete</a>
-					</div>
-				</div>
-			</div>
+		<div th:if="${movies.isEmpty()}" class="empty-state">
+			<h2>📭 No Movies Found</h2>
+			<p>No movies have been added yet. Click the button below to create your first movie.</p>
+			<a href="/add-movie" class="add-btn">+ Add First Movie</a>
 		</div>
 
 	</div>
 
 	<!-- Bootstrap JS -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			const toasts = document.querySelectorAll('.toastify');
-			toasts.forEach(toastElement => {
-				const closeBtn = document.createElement('button');
-				closeBtn.className = 'toastify-close';
-				closeBtn.innerHTML = '×';
-				closeBtn.type = 'button';
-
-				const spanElement = toastElement.querySelector('span');
-				if (spanElement) {
-					toastElement.insertBefore(closeBtn, spanElement.nextSibling);
-				}
-
-				closeBtn.addEventListener('click', () => {
-					toastElement.style.animation = 'toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-					setTimeout(() => toastElement.remove(), 400);
-				});
-
-				const timeout = setTimeout(() => {
-					toastElement.style.animation = 'toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-					setTimeout(() => toastElement.remove(), 400);
-				}, 3500);
-
-				closeBtn.addEventListener('click', () => clearTimeout(timeout));
-			});
-		});
-	</script>
 
 </body>
 </html>

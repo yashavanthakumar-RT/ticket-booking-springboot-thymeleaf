@@ -37,3 +37,6 @@ spring:
 admin:
   email: yashu@gmail.com
   password: Yashu
+
+cloudinary:
+  url: ${CLOUDINARY_URL}

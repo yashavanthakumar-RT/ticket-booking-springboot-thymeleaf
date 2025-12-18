@@ -3,10 +3,11 @@ package Jsp_Project.Movie_Ticket.UserService;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -16,17 +17,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import Jsp_Project.Movie_Ticket.Repository.MovieRepository;
 import Jsp_Project.Movie_Ticket.Repository.ScreenRepository;
+import Jsp_Project.Movie_Ticket.Repository.SeatRepository;
+import Jsp_Project.Movie_Ticket.Repository.ShowRepository;
 import Jsp_Project.Movie_Ticket.Repository.TheaterRepository;
 import Jsp_Project.Movie_Ticket.Repository.UserRepository;
 import Jsp_Project.Movie_Ticket.dto.LoginDto;
 import Jsp_Project.Movie_Ticket.dto.MovieDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
 import Jsp_Project.Movie_Ticket.dto.ScreenDto;
+import Jsp_Project.Movie_Ticket.dto.SeatLayoutForm;
+import Jsp_Project.Movie_Ticket.dto.SeatRowDto;
+import Jsp_Project.Movie_Ticket.dto.ShowDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import Jsp_Project.Movie_Ticket.entity.Movie;
 import Jsp_Project.Movie_Ticket.entity.Screen;
 import Jsp_Project.Movie_Ticket.entity.Seat;
+import Jsp_Project.Movie_Ticket.entity.Show;
+import Jsp_Project.Movie_Ticket.entity.ShowSeat;
 import Jsp_Project.Movie_Ticket.entity.Theater;
 import Jsp_Project.Movie_Ticket.entity.User;
 import Jsp_Project.Movie_Ticket.util.AES;
@@ -48,6 +56,8 @@ public class UserServiceImpl implements UserService {
 	private final ScreenRepository screenRepository;
 	private final MovieRepository movieRepository;
 	private final CloudinaryHelper cloudinaryHelper;
+	private final SeatRepository seatRepository;
+	private final ShowRepository showRepository;
 
 	@Override
 	public String register(UserDto userDto, BindingResult result, RedirectAttributes attributes) {
@@ -304,20 +314,12 @@ public class UserServiceImpl implements UserService {
 			return "add-theater.html";
 		}
 
-		String baseUploadDir = System.getProperty("user.dir") + "/uploads/theaters/";
-		File directory = new File(baseUploadDir);
-		if (!directory.exists())
-			directory.mkdirs();
-
-		String filename = theaterDto.getName() + image.getOriginalFilename();
-		File destination = new File(directory, filename);
-		image.transferTo(destination);
-
 		Theater theater = new Theater();
 		theater.setName(theaterDto.getName());
 		theater.setAddress(theaterDto.getAddress());
 		theater.setLocationLink(theaterDto.getLocationLink());
-		theater.setImageLocation("/uploads/theaters/" + filename);
+
+		theater.setImageLocation(cloudinaryHelper.getTheaterImageLink(image));
 
 		theaterRepository.save(theater);
 
@@ -423,7 +425,7 @@ public class UserServiceImpl implements UserService {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		} else {
-			Theater theater = theaterRepository.findById(id).get();
+			theaterRepository.findById(id).get();
 			screenDto.setTheaterId(id);
 			map.put("screenDto", screenDto);
 			return "add-screen.html";
@@ -518,12 +520,47 @@ public class UserServiceImpl implements UserService {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		} else {
-			Screen screen = screenRepository.findById(id).orElseThrow();
-			List<Seat> seats = screen.getSeats();
-			map.put("seats", seats);
+			Screen screen = screenRepository.findById(id).orElseThrow(() -> new RuntimeException("Screen not found"));
+
+			List<Seat> seats = seatRepository.findByScreenOrderBySeatRowAscSeatColumnAsc(screen);
+
+			// Group seats by row
+			Map<String, List<Seat>> seatsByRow = seats.stream()
+					.collect(Collectors.groupingBy(Seat::getSeatRow, LinkedHashMap::new, Collectors.toList()));
+			map.put("seatsByRow", seatsByRow);
 			map.put("screenId", id);
-			return "manage-seats.html";
+
+			return "manage-seats";
 		}
+	}
+
+	@Override
+	public String saveSeats(Long screenId, SeatLayoutForm form, HttpSession session, RedirectAttributes attributes) {
+
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		}
+
+		Screen screen = screenRepository.findById(screenId).orElseThrow();
+
+		for (SeatRowDto row : form.getRows()) {
+			for (int i = 1; i <= row.getTotalSeats(); i++) {
+
+				Seat seat = new Seat();
+				seat.setScreen(screen);
+				seat.setSeatRow(row.getRowName());
+				seat.setSeatColumn(i);
+				seat.setSeatNumber(row.getRowName() + i);
+				seat.setCategory(row.getCategory());
+
+				seatRepository.save(seat);
+			}
+		}
+
+		attributes.addFlashAttribute("success", "Seats added successfully");
+		return "redirect:/manage-screens/" + screen.getTheater().getId();
 	}
 
 	@Override
@@ -533,8 +570,9 @@ public class UserServiceImpl implements UserService {
 			attributes.addFlashAttribute("fail", "Invalid Session");
 			return "redirect:/login";
 		} else {
-			Screen screen = screenRepository.findById(id).orElseThrow();
+			screenRepository.findById(id).orElseThrow();
 			map.put("id", id);
+			map.put("seatLayoutForm", new SeatLayoutForm());
 			return "add-seats.html";
 		}
 	}
@@ -650,4 +688,91 @@ public class UserServiceImpl implements UserService {
 			return "redirect:/edit-movies/" + id;
 		}
 	}
+	@Override
+	public String manageShows(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Show> shows = showRepository.findByScreen(screen);
+			map.put("shows", shows);
+			map.put("id", id);
+			return "manage-shows";
+		}
+	}
+
+	@Override
+	public String addShow(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Screen screen = screenRepository.findById(id).orElseThrow();
+			List<Movie> movies = movieRepository.findAll();
+			map.put("movies", movies);
+			ShowDto showDto = new ShowDto();
+			showDto.setScreenId(screen.getId());
+			map.put("showDto", showDto);
+			return "add-show";
+		}
+	}
+
+	@Override
+	public String addShow(ShowDto showDto, BindingResult result, RedirectAttributes attributes, HttpSession session) {
+		User user = getUserFromSession(session);
+		if (user == null || !user.getRole().equals("ADMIN")) {
+			attributes.addFlashAttribute("fail", "Invalid Session");
+			return "redirect:/login";
+		} else {
+			Movie movie = movieRepository.findById(showDto.getMovieId()).orElseThrow();
+			Screen screen = screenRepository.findById(showDto.getScreenId()).orElseThrow();
+			if (showDto.getShowDate().isBefore(movie.getReleaseDate()))
+				result.rejectValue("showDate", "error.showDate", "* Show Date Should be After Movie Release");
+
+			List<Show> shows = showRepository.findByScreen(screen);
+			if (!shows.isEmpty()) {
+				boolean flag = false;
+				for (Show show : shows) {
+					if (showDto.getStartTime().isBefore(show.getEndTime())) {
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					result.rejectValue("startTime", "error.startTime", "* In Same Time There is One More Show");
+			}
+
+			if (result.hasErrors()) {
+				return "add-show";
+			} else {
+				Show show = new Show();
+				show.setMovie(movie);
+				show.setScreen(screen);
+				show.setShowDate(showDto.getShowDate());
+				show.setStartTime(showDto.getStartTime());
+				show.setTicketPrice(showDto.getTicketPrice());
+				show.setEndTime(show.getStartTime().plusHours(movie.getDuration().getHour())
+						.plusMinutes(movie.getDuration().getMinute() + 30));
+
+				List<ShowSeat> seats = new ArrayList<ShowSeat>();
+
+				List<Seat> exSeats = seatRepository.findByScreenOrderBySeatRowAscSeatColumnAsc(screen);
+				for (Seat seat : exSeats) {
+					ShowSeat showSeat = new ShowSeat();
+					showSeat.setBooked(false);
+					showSeat.setSeat(seat);
+				}
+
+				show.setSeats(seats);
+				showRepository.save(show);
+				attributes.addFlashAttribute("pass", "Show Added Success");
+				return "redirect:/manage-shows/" + showDto.getScreenId();
+			}
+
+		}
+	}
+
 }

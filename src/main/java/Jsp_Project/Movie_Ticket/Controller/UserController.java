@@ -17,6 +17,8 @@ import Jsp_Project.Movie_Ticket.dto.LoginDto;
 import Jsp_Project.Movie_Ticket.dto.MovieDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
 import Jsp_Project.Movie_Ticket.dto.ScreenDto;
+import Jsp_Project.Movie_Ticket.dto.SeatLayoutForm;
+import Jsp_Project.Movie_Ticket.dto.ShowDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import jakarta.servlet.http.HttpSession;
@@ -186,6 +188,12 @@ public class UserController {
 		return userService.addSeats(id, session, map, attributes);
 	}
 
+	@PostMapping("/add-seats/{id}")
+	public String saveSeats(@PathVariable Long id, SeatLayoutForm seatLayoutForm, HttpSession session,
+			RedirectAttributes attributes) {
+		return userService.saveSeats(id, seatLayoutForm, session, attributes);
+	}
+
 	@GetMapping("/manage-movies")
 	public String moviesmange(HttpSession session, RedirectAttributes attributes, ModelMap map) {
 		return userService.manageMovies(session, attributes, map);
@@ -216,6 +224,21 @@ public class UserController {
 	public String updateMovies(@Valid MovieDto movieDto, BindingResult result, RedirectAttributes attributes,
 			HttpSession session, @RequestParam("id") Long id) {
 		return userService.updateMovies(movieDto, id, result, attributes, session);
+	}
+	@GetMapping("/manage-shows/{id}")
+	public String manageShows(@PathVariable Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		return userService.manageShows(id, map, attributes, session);
+	}
+
+	@GetMapping("/add-show/{id}")
+	public String addShow(@PathVariable Long id, ModelMap map, RedirectAttributes attributes, HttpSession session) {
+		return userService.addShow(id, map, attributes, session);
+	}
+
+	@PostMapping("/add-show")
+	public String addShow(@Valid ShowDto showDto, BindingResult result, RedirectAttributes attributes,
+			HttpSession session) {
+		return userService.addShow(showDto, result, attributes, session);
 	}
 
 }

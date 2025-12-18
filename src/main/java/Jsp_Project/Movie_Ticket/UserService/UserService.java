@@ -10,6 +10,8 @@ import Jsp_Project.Movie_Ticket.dto.LoginDto;
 import Jsp_Project.Movie_Ticket.dto.MovieDto;
 import Jsp_Project.Movie_Ticket.dto.PasswordDto;
 import Jsp_Project.Movie_Ticket.dto.ScreenDto;
+import Jsp_Project.Movie_Ticket.dto.SeatLayoutForm;
+import Jsp_Project.Movie_Ticket.dto.ShowDto;
 import Jsp_Project.Movie_Ticket.dto.TheaterDto;
 import Jsp_Project.Movie_Ticket.dto.UserDto;
 import jakarta.servlet.http.HttpSession;
@@ -77,8 +79,13 @@ public interface UserService {
 
 	public String deleteMovies(Long id, HttpSession session, RedirectAttributes attributes);
 
-	public String updateMovies(@Valid MovieDto movieDto,Long id, BindingResult result, RedirectAttributes attributes,
+	public String updateMovies(@Valid MovieDto movieDto, Long id, BindingResult result, RedirectAttributes attributes,
 			HttpSession session);
 
-	 
+	String saveSeats(Long id, SeatLayoutForm seatLayoutForm, HttpSession session, RedirectAttributes attributes);
+	String manageShows(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session);
+
+	String addShow(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session);
+
+	String addShow(ShowDto showDto, BindingResult result, RedirectAttributes attributes, HttpSession session);
 }

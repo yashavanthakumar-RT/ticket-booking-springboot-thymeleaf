@@ -8,7 +8,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
+ 
 
 @Configuration
 public class MyConfig {
@@ -17,7 +17,8 @@ public class MyConfig {
 		return new SecureRandom();
 	}
 
-	@Bean
+	@SuppressWarnings("removal")
+	@Bean                                                                               
 	RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connectionFactory);
@@ -28,4 +29,5 @@ public class MyConfig {
 		template.afterPropertiesSet();
 		return template;
 	}
+
 }
