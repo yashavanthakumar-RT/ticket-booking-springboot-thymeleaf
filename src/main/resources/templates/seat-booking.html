@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Seat Booking</title>
+</head>
+
+<body>
+
+
+	<section class="container" id="seat" th:if="${!seats.isEmpty()}">
+
+		<h2>Available Seats</h2>
+
+		<div class="card-grid">
+
+			<div class="movie-card" th:each="seat : ${seats}">
+
+				<p th:text="${seat.seatNumber}"></p>
+
+				<div class="card-body">
+					<h3 th:text="${seat.seatRow}"></h3>
+
+					<p>
+						Column: <span th:text="${seat.seatColumn}"></span>
+					</p>
+
+					<p>
+						Category: <span th:text="${seat.category}"></span>
+					</p>
+
+					<div class="btn-group">
+						<!-- BOOK -->
+						<a class="btn btn-book" th:href="@{/book-seat/{id}(id=${seat.id})}">
+							🎟 Book </a>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+</body>
+
+</html>

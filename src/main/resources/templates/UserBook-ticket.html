@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Book Tickets</title>
+
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background: #f4f6f8;
+	margin: 0;
+	padding: 0;
+}
+
+h1, h2 {
+	text-align: center;
+}
+
+.container {
+	width: 90%;
+	margin: auto;
+	padding: 30px 0;
+}
+
+/* CARD GRID */
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 25px;
+	justify-items: center;
+}
+
+/* CARD */
+.movie-card {
+	width: 260px;
+	background: #fff;
+	border-radius: 14px;
+	overflow: hidden;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	cursor: pointer;
+}
+
+/* HOVER / CLICK EFFECT */
+.movie-card:hover {
+	transform: translateY(-8px);
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* IMAGE FULL FIT */
+.movie-card img {
+	width: 100%;
+	height: 280px;
+	object-fit: contain; /* FULL IMAGE */
+	background: #000; /* empty space fill */
+}
+
+.card-body {
+	padding: 15px;
+	text-align: center;
+}
+
+.card-body h3 {
+	margin: 10px 0 5px;
+	font-size: 18px;
+}
+
+.card-body p {
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 12px;
+}
+
+/* BUTTONS */
+.btn-group {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+}
+
+.btn {
+	padding: 8px 12px;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #fff;
+	transition: transform 0.2s;
+}
+
+.btn-map {
+	background: #0d6efd;
+}
+
+.btn-book {
+	background: #198754;
+}
+
+.btn:hover {
+	transform: scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+	<h1>Select Theater</h1>
+
+	<section class="container" id="book" th:if="${!movie.isEmpty()}">
+
+		<h2>Now Showing</h2>
+
+		<div class="card-grid">
+
+			<div class="movie-card" th:each="books : ${movie}" th:if="${books.screenCount>0}">
+
+				<img th:src="${books.imageLocation}" alt="Movie Poster">
+
+				<div class="card-body">
+					<h3 th:text="${books.name}"></h3>
+
+					<p>
+						Screens: <span th:text="${books.screenCount}"></span>
+					</p>
+
+					<div class="btn-group">
+						<!-- MAP -->
+						<a class="btn btn-map" th:href="${books.locationLink}"
+							target="_blank"> 📍 Map </a>
+
+						<!-- BOOK -->
+						<a class="btn btn-book"
+							th:href="'/seat-booking/'+${books.id}"> 🎟 Book </a>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+
+	<p th:if="${book.isEmpty()}" style="text-align: center; color: red;">
+		No movies available</p>
+
+</body>
+</html>

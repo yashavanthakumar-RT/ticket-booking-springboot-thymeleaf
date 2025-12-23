@@ -83,9 +83,18 @@ public interface UserService {
 			HttpSession session);
 
 	String saveSeats(Long id, SeatLayoutForm seatLayoutForm, HttpSession session, RedirectAttributes attributes);
+
 	String manageShows(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session);
 
 	String addShow(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session);
 
-	String addShow(ShowDto showDto, BindingResult result, RedirectAttributes attributes, HttpSession session);
+	String addShow(ShowDto showDto, BindingResult result, RedirectAttributes attributes, HttpSession session,
+			ModelMap map);
+
+	public String loadMain(ModelMap map);
+
+	public String bookTickets( Long id,ModelMap map, RedirectAttributes attributes,
+			HttpSession session);
+
+	public String bookseats(Long id, ModelMap map, RedirectAttributes attributes, HttpSession session);
 }

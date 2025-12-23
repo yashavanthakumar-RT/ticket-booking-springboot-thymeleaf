@@ -1,7 +1,5 @@
 package Jsp_Project.Movie_Ticket.UserService;
 
- 
-
 import java.time.Duration;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,7 +40,5 @@ public class RedisServiceImpl implements RedisService {
 		else
 			return (int) otp;
 	}
-
-	 
 
 }

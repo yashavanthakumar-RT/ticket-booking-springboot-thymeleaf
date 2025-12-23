@@ -441,11 +441,10 @@
 							</td>
 							<td th:text="${movie.duration}"></td>
 							<td th:text="${movie.languages}"></td>
-							<td th:text="${#dates.format(movie.releaseDate, 'dd/MM/yyyy')}"></td>
-							<td>
+								<td th:text="${movie.releaseDate}"></td><td>
 								<div class="action-cell">
-									<a href="#" class="btn-edit">Edit</a>
-									<a href="#" class="btn-delete">Delete</a>
+									<a th:href="'/edit-movies/'+${movie.id}" class="btn-edit">Edit</a>
+									<a th:href="'/delete-movies/'+${movie.id}" class="btn-delete">Delete</a>
 								</div>
 							</td>
 						</tr>
