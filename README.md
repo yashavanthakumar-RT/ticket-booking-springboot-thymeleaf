@@ -94,13 +94,13 @@ Designed RESTful APIs with proper separation of concerns.
 ---
 
 ## 📸 Screenshots
-    ![Home Page](https://github.com/user-attachments/assets/27eca759-2455-4e80-a185-fd3674f0410f)
-<img width="1863" height="886" alt="Login" src="https://github.com/user-attachments/assets/580b47b0-e2a1-46d1-8e16-72ae5c83fab7" />
+![Home Page](https://github.com/user-attachments/assets/f739e44b-c6bb-44fc-8731-d89d8c4eb8ba)
 
- <img width="1812" height="527" alt="movie Managame" src="https://github.com/user-attachments/assets/c135b308-3bbf-4dd6-92d6-294a323dcf1a" />
- ![Theater Manage](https://github.com/user-attachments/assets/16f75c70-466a-4c7a-b07f-7bb26e08efd4)
+ <img width="1863" height="886" alt="Login" src="https://github.com/user-attachments/assets/580b47b0-e2a1-46d1-8e16-72ae5c83fab7" />
+ ![Theater Manage](https://github.com/user-attachments/assets/d33daecd-8a23-475c-9407-bfef140f2540)
 
- <img width="1218" height="858" alt="Manage Theater" src="https://github.com/user-attachments/assets/0eebb5cb-64b1-41e7-a910-178a02e244f9" />
+  <img width="1812" height="527" alt="movie Managame" src="https://github.com/user-attachments/assets/c135b308-3bbf-4dd6-92d6-294a323dcf1a" />
+  <img width="1218" height="858" alt="Manage Theater" src="https://github.com/user-attachments/assets/0eebb5cb-64b1-41e7-a910-178a02e244f9" />
  <img width="1892" height="574" alt="Manage Users" src="https://github.com/user-attachments/assets/f6229f23-5180-46d8-88d0-df54a1794ead" />
 
 
